@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace=接口的全限定类名 -->
+<mapper namespace="top.llk.dao.CheckItemDao">
+    <!--分页查找检查项-->
+    <select id="queryCheckItems" parameterType="top.llk.entity.QueryPageBean" resultType="CheckItem">
+        SELECT * FROM t_checkitem
+        <if test="queryString !=null &amp;&amp; queryString != '' ">
+            WHERE name LIKE #{queryString} OR code LIKE #{queryString}
+        </if>
+        ORDER BY id LIMIT #{index},#{pageSize}
+    </select>
+    <!--统计满足条件的检查项;使用pageHelper可以省略这个步骤-->
+    <select id="countItems" parameterType="top.llk.entity.QueryPageBean" resultType="long">
+        SELECT COUNT(*) FROM t_checkitem
+        <if test="queryString !=null &amp;&amp; queryString != '' ">
+            WHERE name LIKE #{queryString} OR code LIKE #{queryString}
+        </if>
+    </select>
+
+
+    <!--根据检查组id查询检查项-->
+    <select id="findCheckItemByCheckGroupId" parameterType="int" resultType="top.llk.pojo.CheckItem">
+        SELECT * from t_checkitem where id in
+         (SELECT checkitem_id from t_checkgroup_checkitem where checkgroup_id = #{id})
+    </select>
+</mapper>

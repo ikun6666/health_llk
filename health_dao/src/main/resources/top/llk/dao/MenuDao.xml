@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace=接口的全限定类名 -->
+<mapper namespace="top.llk.dao.MenuDao">
+    <!--查询一级菜单-->
+    <select id="findMenuListByRoleId" resultType="top.llk.pojo.Menu" parameterType="java.lang.Integer">
+         SELECT m.* FROM t_role_menu rm,t_menu m
+         WHERE rm.role_id=#{roleId} AND rm.menu_id=m.id AND m.level=1
+         ORDER BY path
+    </select>
+
+    <!--遍历查询menu的二级菜单-->
+    <select id="findMenuListByparentMenuId" resultType="top.llk.pojo.Menu" parameterType="java.lang.Integer">
+        SELECT * FROM t_menu WHERE parentMenuId = #{parentMenuId} ORDER BY  priority
+    </select>
+
+    <!--分页搜索菜单-->
+    <select id="selectByCondition" resultType="top.llk.pojo.Menu" parameterType="string">
+        SELECT * FROM t_menu
+        <if test="value != null and value.length > 0">
+            WHERE name = #{value}
+        </if>
+    </select>
+    <!--添加菜单-->
+    <insert id="addMenu" parameterType="top.llk.pojo.Menu">
+        insert into t_menu
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null">
+                name,
+            </if>
+            <if test="linkUrl != null">
+                linkUrl,
+            </if>
+            <if test="path != null">
+                path,
+            </if>
+            <if test="priority != null">
+                priority,
+            </if>
+            <if test="icon != null">
+                icon,
+            </if>
+            <if test="description != null">
+                description,
+            </if>
+            <if test="parentMenuId != null">
+                parentMenuId,
+            </if>
+            level,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="linkUrl != null">
+                #{linkUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="path != null">
+                #{path,jdbcType=VARCHAR},
+            </if>
+            <if test="priority != null">
+                #{priority,jdbcType=INTEGER},
+            </if>
+            <if test="icon != null">
+                #{icon,jdbcType=VARCHAR},
+            </if>
+            <if test="description != null">
+                #{description,jdbcType=VARCHAR},
+            </if>
+            <if test="parentMenuId != null">
+                #{parentMenuId,jdbcType=INTEGER},
+            </if>
+            <if test="parentMenuId == null">
+                1,
+            </if>
+            <if test="parentMenuId != null">
+                2,
+            </if>
+        </trim>
+    </insert>
+
+    <!--编辑更新菜单-->
+    <update id="updateMenu" parameterType="top.llk.pojo.Menu">
+        UPDATE t_menu
+        <set>
+            <if test="name != null and name.length>0">
+                name = #{name},
+            </if>
+            <if test="linkUrl != null and linkUrl.length>0">
+                linkUrl= #{linkUrl},
+            </if>
+            <if test="path != null and path.length>0">
+                path= #{path},
+            </if>
+            <if test="priority != null">
+                priority= #{priority},
+            </if>
+            <if test="icon != null and icon.length>0">
+                icon= #{icon},
+            </if>
+            <if test="description != null and description.length>0">
+                description= #{description},
+            </if>
+            <if test="parentMenuId != null">
+                parentMenuId=  #{parentMenuId},level=2,
+            </if>
+            <if test="parentMenuId == null">
+                parentMenuId = NULL ,LEVEL =1,
+            </if>
+        </set>
+        where id =#{id}
+    </update>
+</mapper>

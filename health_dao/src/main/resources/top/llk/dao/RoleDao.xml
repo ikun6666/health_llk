@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace=接口的全限定类名 -->
+<mapper namespace="top.llk.dao.RoleDao">
+    <!--根据用户id查询角色-->
+    <select id="findRolesByUserId" parameterType="java.lang.Integer" resultType="top.llk.pojo.Role">
+
+      SELECT * from t_role where id in (SELECT role_id FROM t_user_role where user_id = #{id})
+
+    </select>
+
+    <!--分页搜索角色-->
+    <select id="selectByCondition" resultType="top.llk.pojo.Role" parameterType="string">
+        SELECT * FROM t_role
+        <if test="value != null and value.length > 0">
+            WHERE name = #{value} or keyword = #{value}
+        </if>
+    </select>
+
+    <!--添加角色-->
+    <insert id="addRole" parameterType="top.llk.pojo.Role">
+        <selectKey resultType="int" keyProperty="id" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into t_role (id, name, keyword,description)
+        values (#{id}, #{name}, #{keyword},#{description})
+    </insert>
+
+    <!--更新角色-->
+    <update id="update" parameterType="top.llk.pojo.Role">
+        UPDATE t_role 
+        <set>
+            <if test="name != null and name.length>0">
+                name= #{name},
+            </if>
+            <if test="keyword != null and keyword.length>0">
+                keyword= #{keyword},
+            </if>
+            <if test="description != null and description.length>0">
+                description= #{description},
+            </if>
+        </set>
+        WHERE id=#{id}
+    </update>
+
+</mapper>

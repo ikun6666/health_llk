@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="../js/vue.js"></script>
+</head>
+<body>
+
+<div id="app">
+    <select v-for="(arrItem,key) in selectList" v-model="selectArr[key]" @focus="position=key" @change="selected" :key="key" style="margin:10px;padding:10px">
+        <option v-for="item in arrItem" :value="item.value" :key="item.value">{{item.label}}</option>
+    </select>
+    <p>选中项: {{ selectArr }}</p>
+</div>
+<script>
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            position: null,
+            selectArr: ['第1级-选项1'],
+            selectList: [[{
+                value: '第1级-选项1',
+                label: '第1级-选项1'
+            },
+                {
+                    value: '第1级-选项2',
+                    label: '第1级-选项2'
+                },
+                {
+                    value: '第1级-选项3',
+                    label: '第1级-选项3'
+                },
+                {
+                    value: '第1级-选项4',
+                    label: '第1级-选项4'
+                },
+                {
+                    value: '第1级-选项5',
+                    label: '第1级-选项5'
+                }]]
+        },
+        methods: {
+            //模拟获取下一级选项（实际项目可通过接口获取或者根据实际情况自行修改）
+            addSelectList(index) {
+                return [{
+                    value: '第' + (index + 2) + '级-选项1',
+                    label: '第' + (index + 2) + '级-选项1'
+                },
+                    {
+                        value: '第' + (index + 2) + '级-选项2',
+                        label: '第' + (index + 2) + '级-选项2'
+                    },
+                    {
+                        value: '第' + (index + 2) + '级-选项3',
+                        label: '第' + (index + 2) + '级-选项3'
+                    },
+                    {
+                        value: '第' + (index + 2) + '级-选项4',
+                        label: '第' + (index + 2) + '级-选项4'
+                    },
+                    {
+                        value: '第' + (index + 2) + '级-选项5',
+                        label: '第' + (index + 2) + '级-选项5'
+                    }]
+            },
+            selected(e) {
+                var current = e.target.value;//获取选中值(实际项目可通过此值调接口获取下一级选项)
+                var nextSelect = this.addSelectList(this.position); //模拟获取下一级选项
+                this.selectList.splice(this.position + 1, this.selectList.length, nextSelect);
+                this.selectArr.splice(this.position + 1, this.selectArr.length);
+            },
+        }
+    })
+
+</script>
+</body>
+</html>

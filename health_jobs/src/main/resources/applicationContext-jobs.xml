@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+							http://www.springframework.org/schema/beans/spring-beans.xsd
+							http://www.springframework.org/schema/mvc
+							http://www.springframework.org/schema/mvc/spring-mvc.xsd
+							http://code.alibabatech.com/schema/dubbo
+							http://code.alibabatech.com/schema/dubbo/dubbo.xsd
+							http://www.springframework.org/schema/context
+							http://www.springframework.org/schema/context/spring-context.xsd">
+
+
+    <!--包扫描 后续redis注入会为空-->
+    <context:component-scan base-package="top.llk.jobs"/>
+    <!--注册任务类-->
+    <!--<bean id="helloService" class="com.itheima.jobs.HelloService"/>-->
+    <bean id="clearImages" class="top.llk.jobs.ClearImgJob"/>
+
+    <!--spring整合quartz-->
+    <!--注册任务详情-->
+    <bean id="jobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <!--任务对象-->
+        <property name="targetObject" ref="clearImages"/>
+        <!--任务方法-->
+        <property name="targetMethod" value="clearImg"/>
+    </bean>
+
+
+    <!--注册触发器 触发任务详情-->
+    <bean id="cronTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <!--将任务详情放到触发器中-->
+        <property name="jobDetail" ref="jobDetail"/>
+        <!--配置任务什么时候触发 每隔10秒钟运行一次-->
+        <property name="cronExpression">
+            <value>0/30 * * * * ?</value>
+        </property>
+    </bean>
+
+
+
+    <!--注册任务调度的工厂 项目启动的时候自动触发定时运行任务-->
+    <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <!--将触发器放到任务调度工厂中-->
+        <property name="triggers">
+            <list>
+                <ref bean="cronTrigger"/>
+            </list>
+        </property>
+    </bean>
+
+
+</beans>

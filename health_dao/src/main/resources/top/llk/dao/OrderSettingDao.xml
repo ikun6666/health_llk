@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace=接口的全限定类名 -->
+<mapper namespace="top.llk.dao.OrderSettingDao">
+    <!--更新预约数量-->
+    <update id="updateOrders" parameterType="top.llk.pojo.OrderSetting">
+        update t_ordersetting
+        <set>
+            <if test="number!= null and number >0">
+                number = #{number},
+            </if>
+            <if test="reservations != null and reservations>0">
+                reservations = #{reservations}
+            </if>
+        </set>
+        where orderDate = #{orderDate}
+    </update>
+</mapper>

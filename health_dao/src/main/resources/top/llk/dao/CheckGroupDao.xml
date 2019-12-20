@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace=接口的全限定类名 -->
+<mapper namespace="top.llk.dao.CheckGroupDao">
+    <!--分页搜索检查组-->
+    <select id="selectByCondition" resultType="top.llk.pojo.CheckGroup" parameterType="string">
+        SELECT * FROM t_checkgroup
+        <if test="value != null &amp;&amp; value.length > 0">
+            WHERE code = #{value} OR name = #{value} OR helpCode = #{value}
+        </if>
+    </select>
+
+    <!--添加检查组-->
+    <insert id="addCheckGroup" parameterType="top.llk.pojo.CheckGroup">
+        <!-- 获取自增的主键id -->
+        <selectKey resultType="int" keyProperty="id" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+
+        INSERT INTO t_checkgroup
+        ( code, name, helpCode, sex, remark, attention)
+        VALUES
+        ( #{code}, #{name}, #{helpCode}, #{sex}, #{remark}, #{attention} )
+    </insert>
+
+
+    <!--添加检查组与检查项关联-->
+    <insert id="addCheckGroupAndCheckitem" parameterType="hashMap">
+        insert into t_checkgroup_checkitem (checkgroup_id,checkitem_id) VALUES (#{checkGroupId},#{checkitemId})
+    </insert>
+
+    <!--根据检查组id查询检查组-->
+    <select id="findCheckGroupById" parameterType="int" resultType="top.llk.pojo.CheckGroup">
+        SELECT * FROM t_checkgroup WHERE id=#{id}
+    </select>
+
+    <!--根据检查组id查询检查项ids-->
+    <select id="findCheckItemIdsByCheckGroupId" resultType="int" parameterType="int">
+         select checkitem_id from t_checkgroup_checkitem where checkgroup_id= #{id}
+    </select>
+
+    <!--修改检查组单表信息-->
+    <update id="editCheckGroup" parameterType="top.llk.pojo.CheckGroup">
+        UPDATE t_checkgroup
+        <set>
+            <if test="code != null">
+                code= #{code},
+            </if>
+            <if test="name != null">name= #{name},</if>
+            <if test="helpCode != null">helpCode= #{helpCode},</if>
+            <if test="sex != null">sex= #{sex},</if>
+            <if test="remark != null">remark= #{remark},</if>
+            <if test="attention != null">attention = #{attention},</if>
+        </set>
+        WHERE id =#{id}
+    </update>
+
+
+    <!--根据套餐id查询检查组-->
+    <resultMap id="baseResultMap" type="top.llk.pojo.CheckGroup">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="code" property="code"/>
+        <result column="helpCode" property="helpCode"/>
+        <result column="sex" property="sex"/>
+        <result column="remark" property="remark"/>
+        <result column="attention" property="attention"/>
+    </resultMap>
+    <resultMap id="findCheckGroupBySetmealId" type="top.llk.pojo.CheckGroup" extends="baseResultMap">
+        <collection property="checkItems" column="id" javaType="ArrayList" ofType="top.llk.pojo.CheckItem"
+                    select="top.llk.dao.CheckItemDao.findCheckItemByCheckGroupId">
+        </collection>
+    </resultMap>
+    <select id="findCheckGroupBySetmealId" resultMap="findCheckGroupBySetmealId">
+        SELECT * from t_checkgroup WHERE id in (select checkgroup_id from t_setmeal_checkgroup where setmeal_id=#{id})
+    </select>
+
+</mapper>

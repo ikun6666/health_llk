@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace=接口的全限定类名 -->
+<mapper namespace="top.llk.dao.SetmealDao">
+    <!--分页查询套餐-->
+    <select id="selectByCondition" parameterType="string" resultType="top.llk.pojo.Setmeal">
+        SELECT * from t_setmeal
+        <if test="value !=null and value.length>0">
+            WHERE name= #{value} or code = #{value} or helpCode = #{value}
+        </if>
+    </select>
+    <!--添加新套餐-->
+    <insert id="insertSetmeal" parameterType="top.llk.pojo.Setmeal">
+        <selectKey resultType="int" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        INSERT INTO t_setmeal
+        <set>
+            <if test="name !=null and name.length>0">
+                name=#{name},
+            </if>
+            <if test="code !=null and code.length>0">
+                code=#{code},
+
+            </if>
+            <if test="helpCode !=null and helpCode.length>0">
+                helpCode=#{helpCode},
+
+            </if>
+            <if test="sex !=null and sex.length>0">
+                sex=#{sex},
+
+            </if>
+            <if test="age !=null and age.length>0">
+                age=#{age},
+
+            </if>
+            <if test="price !=null and price>0">
+                price=#{price},
+
+            </if>
+            <if test="remark !=null and remark.length>0">
+                remark=#{remark},
+
+            </if>
+            <if test="attention !=null and attention.length>0">
+                attention=#{attention},
+            </if>
+            <if test="img !=null and img.length>0">
+                img=#{img}
+            </if>
+        </set>
+    </insert>
+
+    <!--修改套餐单表-->
+    <update id="editSetmeal" parameterType="top.llk.pojo.Setmeal">
+        UPDATE t_setmeal
+        <set>
+            <if test="name !=null and name.length>0">
+                name=#{name},
+            </if>
+            <if test="code !=null and code.length>0">
+                code=#{code},
+            </if>
+            <if test="helpCode !=null and helpCode.length>0">
+                helpCode=#{helpCode},
+
+            </if>
+            <if test="sex !=null and sex.length>0">
+                sex=#{sex},
+
+            </if>
+            <if test="age !=null and age.length>0">
+                age=#{age},
+
+            </if>
+            <if test="price !=null and price>0">
+                price=#{price},
+
+            </if>
+            <if test="remark !=null and remark.length>0">
+                remark=#{remark},
+
+            </if>
+            <if test="attention !=null and attention.length>0">
+                attention=#{attention},
+            </if>
+            <if test="img !=null and img.length>0">
+                img=#{img}
+            </if>
+        </set>
+        WHERE id=#{id}
+    </update>
+
+    <!--添加套餐和检查组的关联id-->
+    <insert id="insertSetmealAndCheckGroup" parameterType="map">
+      INSERT INTO t_setmeal_checkgroup set setmeal_id=#{setmealId},checkgroup_id=#{checkgroupId}
+    </insert>
+
+    <!--查询套餐详情:有中间表的情况-->
+    <resultMap id="baseResultMap" type="top.llk.pojo.Setmeal">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="code" property="code"/>
+        <result column="helpCode" property="helpCode"/>
+        <result column="sex" property="sex"/>
+        <result column="age" property="age"/>
+        <result column="price" property="price"/>
+        <result column="remark" property="remark"/>
+        <result column="attention" property="attention"/>
+        <result column="img" property="img"/>
+    </resultMap>
+    <resultMap id="findByIdResultMap" type="top.llk.pojo.Setmeal" extends="baseResultMap">
+        <!---->
+        <collection property="checkGroups" javaType="ArrayList" ofType="top.llk.pojo.CheckGroup"
+                    column="id" select="top.llk.dao.CheckGroupDao.findCheckGroupBySetmealId" fetchType="eager">
+        </collection>
+    </resultMap>
+    <select id="findSetmealById" resultMap="findByIdResultMap">
+        SELECT * FROM t_setmeal where id=#{id}
+    </select>
+
+    <!--根据套餐分组统计预约数量-->
+    <select id="countOredersGroupBySetmeal" resultType="map">
+      SELECT COUNT(*) value,s.name name FROM t_order o,t_setmeal s WHERE o.setmeal_id = s.id GROUP BY s.id ORDER BY value
+    </select>
+</mapper>

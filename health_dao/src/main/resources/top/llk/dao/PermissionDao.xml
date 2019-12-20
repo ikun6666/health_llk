@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace=接口的全限定类名 -->
+<mapper namespace="top.llk.dao.PermissionDao">
+    <!-- 根据roleid 查询所有permission-->
+    <select id="findPermissionsByRoleId" resultType="top.llk.pojo.Permission" parameterType="int">
+       SELECT * FROM t_permission
+       WHERE id IN (SELECT permission_id FROM t_role_permission WHERE role_id = #{id})
+    </select>
+
+    <!--权限管理分页查询-->
+    <select id="selectByCondition" parameterType="string" resultType="top.llk.pojo.Permission">
+        SELECT * from t_permission
+        <if test="value != null and value.length > 0">
+            where name = #{VALUE} or keyword = #{value}
+        </if>
+    </select>
+
+    <!--添加权限-->
+    <insert id="add" parameterType="top.llk.pojo.Permission">
+        insert into t_permission (id, name, keyword,
+        description)
+        values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{keyword,jdbcType=VARCHAR},
+        #{description,jdbcType=VARCHAR})
+    </insert>
+
+    <!--修改权限-->
+    <update id="editPermission" parameterType="top.llk.pojo.Permission">
+        UPDATE t_permission
+        <set>
+            <if test="name != null and name.length > 0">
+                name= #{name},
+            </if>
+            <if test="keyword != null and keyword.length > 0">
+                keyword= #{keyword},
+            </if>
+            <if test="description == null">
+                description= "",
+            </if>
+            <if test="description != null">
+                description= #{description},
+            </if>
+        </set>
+        WHERE id =#{id}
+    </update>
+</mapper>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace=接口的全限定类名 -->
+<mapper namespace="top.llk.dao.MemberDao">
+    <!--注册用户-->
+    <insert id="add" parameterType="top.llk.pojo.Member">
+        <selectKey resultType="int" order="AFTER" keyProperty="id">
+            select last_insert_id()
+        </selectKey>
+        INSERT INTO t_member
+        <set>
+            <if test="fileNumber !=null and fileNumber.length>0">
+                fileNumber=#{fileNumber},
+            </if>
+            <if test="name !=null and name.length>0">
+                name=#{name},
+            </if>
+            <if test="sex !=null and sex.length>0">
+                sex=#{sex},
+            </if>
+            <if test="idCard !=null and idCard.length>0">
+                idCard=#{idCard},
+            </if>
+            <if test="phoneNumber !=null and phoneNumber.length>0">
+                phoneNumber=#{phoneNumber},
+            </if>
+            <if test="regTime !=null">
+                regTime=#{regTime},
+            </if>
+            <if test="password !=null and password.length>0">
+                password=#{password},
+            </if>
+            <if test="email !=null and email.length>0">
+                email=#{email},
+            </if>
+            <if test="birthday !=null ">
+                birthday=#{birthday},
+            </if>
+            <if test="remark !=null and remark.length>0">
+                remark=#{remark}
+            </if>
+        </set>
+    </insert>
+<!--统计查询每月的会员数量-->
+    <select id="findMemberCountByMonth" parameterType="string" resultType="int">
+        select count(*) from t_member where regTime &lt;= #{value}
+    </select>
+</mapper>

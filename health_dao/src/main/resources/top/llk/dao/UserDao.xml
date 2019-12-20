@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace=接口的全限定类名 -->
+<mapper namespace="top.llk.dao.UserDao">
+    <!--根据用户名查询User-->
+    <select id="findUserByUsername" parameterType="string" resultType="top.llk.pojo.User">
+        SELECT * from t_user where username=#{value}
+    </select>
+
+
+    <!--分页搜索用户-->
+    <select id="selectByCondition" resultType="top.llk.pojo.User" parameterType="string">
+        SELECT * FROM t_user
+        <if test="value != null &amp;&amp; value.length > 0">
+            WHERE username = #{value}
+        </if>
+    </select>
+
+    <!--添加用户-->
+    <!--添加角色-->
+    <insert id="addUser" parameterType="top.llk.pojo.User">
+        <selectKey resultType="int" keyProperty="id" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into t_user
+        <set>
+            <if test="birthday !=null">
+                birthday=#{birthday},
+            </if>
+            <if test="gender !=null">
+                gender=#{gender},
+            </if>
+            <if test="username !=null">
+                username=#{username},
+            </if>
+            <if test="password !=null">
+                password=#{password},
+            </if>
+            <if test="remark !=null">
+                remark=#{remark},
+            </if>
+
+            <if test="station !=null">
+                station=#{station},
+            </if>
+            <if test="telephone !=null">
+                telephone=#{telephone},
+            </if>
+        </set>
+
+    </insert>
+
+
+    <!--更新用户-->
+    <update id="updateUser" parameterType="top.llk.pojo.User">
+        update  t_user
+        <set>
+            <if test="birthday !=null">
+                birthday=#{birthday},
+            </if>
+            <if test="gender !=null">
+                gender=#{gender},
+            </if>
+            <if test="username !=null">
+                username=#{username},
+            </if>
+            <if test="password !=null">
+                password=#{password},
+            </if>
+            <if test="remark !=null">
+                remark=#{remark},
+            </if>
+
+            <if test="station !=null">
+                station=#{station},
+            </if>
+            <if test="telephone !=null">
+                telephone=#{telephone},
+            </if>
+        </set>
+        WHERE id =#{id}
+    </update>
+</mapper>
