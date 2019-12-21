@@ -58,7 +58,7 @@ public class UserController {
         try {
             //获取用户响应权限的左侧menu
             User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            List<Menu> menuList = userService.findMenuByUsername(user.getUsername());
+            List<Menu> menuList = userService.findMenuByUsername2(user.getUsername());
             return new Result(true, MessageConstant.GET_MENU_SUCCESS, menuList);
         } catch (Exception e) {
             e.printStackTrace();

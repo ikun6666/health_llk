@@ -29,6 +29,13 @@ public interface UserService {
     java.util.List<Menu> findMenuByUsername(String username);
 
     /**
+     * 根据用户名查询对应权限的菜单
+     * @param username
+     * @return
+     */
+    List<Menu> findMenuByUsername2(String username);
+
+    /**
      * 用户列表分页查询
      *
      * @return

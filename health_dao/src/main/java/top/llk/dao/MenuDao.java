@@ -5,6 +5,8 @@ import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Select;
 import top.llk.pojo.Menu;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 
@@ -90,4 +92,18 @@ public interface MenuDao {
      * @return
      */
     void updateMenu(Menu menu);
+
+    /**
+     * 查询这个集合中的所有一级菜单
+     * @param allMenuIds
+     * @return
+     */
+    List<Menu> findParentMenuByIds(HashSet<Integer> allMenuIds);
+
+    /**
+     * 对每一个一级菜单遍历,查询对应的子菜单集合
+     * @param map:key1:allMenuIds所有菜单id; key2:parentMenuId父菜单id
+     * @return
+     */
+    List<Menu> findChildrenMenus(HashMap<String, Object> map);
 }

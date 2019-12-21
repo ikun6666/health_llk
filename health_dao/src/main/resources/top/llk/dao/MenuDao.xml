@@ -105,7 +105,7 @@
                 description= #{description},
             </if>
             <if test="parentMenuId != null">
-                parentMenuId=  #{parentMenuId},level=2,
+                parentMenuId= #{parentMenuId},level=2,
             </if>
             <if test="parentMenuId == null">
                 parentMenuId = NULL ,LEVEL =1,
@@ -113,4 +113,20 @@
         </set>
         where id =#{id}
     </update>
+
+    <!--查询这个集合中的所有一级菜单-->
+    <select id="findParentMenuByIds" parameterType="java.util.HashSet" resultType="top.llk.pojo.Menu">
+        SELECT * FROM t_menu WHERE LEVEL = 1 AND id IN
+        <foreach collection="collection" item="itema" open="(" separator="," close=")">
+            #{itema}
+        </foreach>
+    </select>
+
+    <!--对每一个一级菜单遍历,查询对应的子菜单集合-->
+    <select id="findChildrenMenus" resultType="top.llk.pojo.Menu" parameterType="java.util.HashMap">
+            SELECT * FROM t_menu WHERE parentMenuId = #{parentMenuId} AND id IN
+            <foreach collection="allMenuIds" item="itema" open="(" separator="," close=")">
+                #{itema}
+            </foreach>
+    </select>
 </mapper>

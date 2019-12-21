@@ -113,6 +113,47 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
+     * 根据用户名查询对应权限的菜单
+     *
+     * @param username
+     * @return
+     */
+    @Override
+    public List<Menu> findMenuByUsername2(String username) {
+        //1.查询用户
+        User user = userDao.findUserByUsername(username);
+
+        //2.查询用户的所有角色
+        Set<Role> roles = roleDao.findRolesByUserId(user.getId());
+
+        //3.查询所有角色对应的menuId集合:HashSet<Integer> 可自动去除重复的int
+        HashSet<Integer> allMenuIds = new HashSet<>();
+        for (Role role : roles) {
+            List<Integer> menuIdsByRoleId = roleDao.findMenuIdsByRoleId(role.getId());
+            allMenuIds.addAll(menuIdsByRoleId);
+        }
+
+        //4.查询这个集合中的所有一级菜单
+        List<Menu> parentMenus = menuDao.findParentMenuByIds(allMenuIds);
+
+        //5.对每一个一级菜单遍历,查询对应的子菜单集合
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("allMenuIds", allMenuIds);
+        for (Menu parentMenu : parentMenus) {
+            map.put("parentMenuId", parentMenu.getId());
+            List<Menu> children = menuDao.findChildrenMenus(map);
+            if (children != null && children.size() > 0) {
+                parentMenu.setChildren(children);
+            }
+        }
+
+        //6.返回步骤4的集合
+        return parentMenus;
+    }
+
+
+
+    /**
      * 用户列表分页查询
      *
      * @return
