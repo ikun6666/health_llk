@@ -328,6 +328,8 @@
                             });
                             this.findPage();
                             this.dialogFormVisible4Edit = false;
+                        }).catch(r => {
+                            this.showMessage(r)
                         })
                     } else {
                         this.$message.error("表单数据校验失败");
@@ -349,6 +351,8 @@
                             });
                             this.findPage();
                             this.dialogFormVisible = false;
+                        }).catch(r => {
+                            this.showMessage(r)
                         })
                     } else {
                         this.$message.error("表单数据校验失败");
@@ -435,8 +439,24 @@
                             type: res.data.flag == true ? 'success' : 'warning'
                         });
                         this.findPage();
+                    }).catch(r => {
+                        this.showMessage(r)
                     })
                 });
+            },
+            //显示错误信息
+            showMessage(msg) {
+                if (msg == "Error: Request failed with status code 403") {
+                    this.$message({
+                        message: "权限不足",
+                        type: 'warning'
+                    });
+                } else {
+                    this.$message({
+                        message: "系统繁忙,请稍后再试",
+                        type: 'warning'
+                    });
+                }
             }
         }
     })

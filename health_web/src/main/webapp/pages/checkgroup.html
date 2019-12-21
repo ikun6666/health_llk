@@ -402,15 +402,13 @@
                 this.$confirm("确认删除这个检查组吗?", "提示", {type: 'warning'}).then(() => {
                     //删除组: 先删除中间表.再删除group
                     axios.get("/checkGroup/deleteCheckGroupById.do?id=" + row.id).then(res => {
+                        //刷新页面
                         this.findPage();
                         // 删除后回显
                         this.$message({
                             message: res.data.message,
                             type: res.data.flag ? 'success' : 'error'
                         });
-                        //刷新页面
-
-
                     })
                 });
             }
