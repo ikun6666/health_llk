@@ -25,6 +25,7 @@ public class MessageConstant {
     public static final String DELETE_CHECKGROUP_SUCCESS = "删除检查组成功";
     public static final String DELETE_USER_SUCCESS = "删除用户成功";
     public static final String DELETE_USER_FAIL = "删除用户失败";
+    public static final String MONTH_ERROR = "月份输入异常";
     public static final String QUERY_CHECKGROUP_SUCCESS = "查询检查组成功";
     public static final String QUERY_CHECKGROUP_FAIL = "查询检查组失败";
     public static final String EDIT_CHECKGROUP_FAIL = "编辑检查组失败";

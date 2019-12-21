@@ -5,6 +5,7 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import top.llk.constant.MessageConstant;
@@ -12,6 +13,7 @@ import top.llk.entity.Result;
 import top.llk.interfaces.MemberService;
 import top.llk.interfaces.ReportService;
 import top.llk.interfaces.SetmealService;
+import top.llk.pojo.StartToEndTime;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
@@ -44,7 +46,7 @@ public class ReportController {
     private ReportService reportService;
 
     /**
-     * 获取会员增加数量
+     * 默认获取会员数量表:12个月
      *
      * @return
      */
@@ -60,6 +62,56 @@ public class ReportController {
             list.add(new SimpleDateFormat("yyyy-MM").format(calendar.getTime()));
         }
 
+        Map<String, Object> map = new HashMap<>();
+        map.put("months", list);
+
+        List<Integer> memberCount = memberService.findMemberCountByMonth(list);
+        map.put("memberCount", memberCount);
+
+        return new Result(true, MessageConstant.GET_MEMBER_NUMBER_REPORT_SUCCESS, map);
+    }
+
+
+    /**
+     * 根据用户指定的时间段==>获取会员增加数量表
+     *
+     * @return
+     */
+    @RequestMapping("getMemberReportByTime")
+    @PreAuthorize("hasAuthority('REPORT_VIEW')")
+    public Result getMemberReportByTime(@RequestBody StartToEndTime startToEndTime) {
+        Date start = null;
+        Date end = null;
+        try {
+            //获取开始和结束月份
+            start = startToEndTime.getDate_start();
+            end = startToEndTime.getDate_end();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Result(false, MessageConstant.MONTH_ERROR);
+        }
+
+        //计算月份差=后-前
+        int countMonth = end.getMonth() - start.getMonth();
+        if (countMonth < 0) {
+            //如果前后月份相反,则差值为负数,回传错误信息
+            return new Result(false, MessageConstant.MONTH_ERROR);
+        }
+        //以开始月份作为起始
+        Calendar calendar = Calendar.getInstance();
+
+        calendar.setTime(start);
+
+
+        List<String> list = new ArrayList<>();
+        //以月份差值作为循环次数控制值
+        calendar.add(Calendar.MONTH, -1);
+        for (int i = 0; i <= countMonth; i++) {
+            calendar.add(Calendar.MONTH, 1);
+            list.add(new SimpleDateFormat("yyyy-MM").format(calendar.getTime()));
+        }
+
+        //整理前端需要的数据
         Map<String, Object> map = new HashMap<>();
         map.put("months", list);
 
