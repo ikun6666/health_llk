@@ -34,6 +34,7 @@ public class CheckGroupController {
      * @return
      */
     @RequestMapping("findAll")
+    @PreAuthorize("hasAuthority('CHECKGROUP_QUERY')")
     public PageResult findAll() {
         return checkGroupService.findAll();
     }
@@ -45,6 +46,7 @@ public class CheckGroupController {
      * @return
      */
     @RequestMapping("findPage")
+    @PreAuthorize("hasAuthority('CHECKGROUP_QUERY')")
     public PageResult findPage(@RequestBody QueryPageBean queryPageBean) {
         return checkGroupService.findPage(queryPageBean);
     }
@@ -56,6 +58,7 @@ public class CheckGroupController {
      * @return
      */
     @RequestMapping("addCheckGroup")
+    @PreAuthorize("hasAuthority('CHECKGROUP_ADD')")
     public Result addCheckGroup(@RequestBody CheckGroup checkGroup, Integer[] checkitemIds) {
         try {
 
@@ -74,6 +77,7 @@ public class CheckGroupController {
      * @return
      */
     @RequestMapping("deleteCheckGroupById")
+    @PreAuthorize("hasAuthority('CHECKGROUP_DELETE')")
     public Result deleteCheckGroupById(Integer id) {
         try {
             checkGroupService.deleteCheckGroupById(id);
@@ -108,6 +112,7 @@ public class CheckGroupController {
      * @return
      */
     @RequestMapping("editCheckGroup")
+    @PreAuthorize("hasAuthority('CHECKGROUP_EDIT')")
     public Result editCheckGroup(@RequestBody CheckGroup checkGroup, Integer[] checkitemIds) {
         try {
             checkGroupService.editCheckGroup(checkGroup, checkitemIds);

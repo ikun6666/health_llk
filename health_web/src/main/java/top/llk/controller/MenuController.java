@@ -1,6 +1,7 @@
 package top.llk.controller;
 
 import com.alibaba.dubbo.config.annotation.Reference;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,6 +35,7 @@ public class MenuController {
      * @return
      */
     @RequestMapping("findPage")
+    @PreAuthorize("hasAuthority('MENU_QUERY')")
     public Result findPage(@RequestBody QueryPageBean queryPageBean) {
         try {
             PageResult pageResult = menuService.selectByCondition(queryPageBean);
@@ -52,6 +54,8 @@ public class MenuController {
      * @return
      */
     @RequestMapping("delete")
+    @PreAuthorize("hasAuthority('MENU_DELETE')")
+
     public Result delete(Integer id) {
         try {
             menuService.deleteById(id);
@@ -73,6 +77,8 @@ public class MenuController {
      * @return
      */
     @RequestMapping("add")
+    @PreAuthorize("hasAuthority('MENU_ADD')")
+
     public Result addMenu(@RequestBody Menu menu) {
         try {
             menuService.addMenu(menu);
@@ -90,6 +96,7 @@ public class MenuController {
      * @return
      */
     @RequestMapping("getParentMenuList")
+    @PreAuthorize("hasAuthority('MENU_QUERY')")
     public List<Menu> getParentMenuList() {
         return menuService.getParentMenuList();
     }
@@ -101,6 +108,8 @@ public class MenuController {
      * @return
      */
     @RequestMapping("edit")
+    @PreAuthorize("hasAuthority('MENU_EDIT')")
+
     public Result editMenu(@RequestBody Menu menu) {
         try {
             menuService.editMenu(menu);

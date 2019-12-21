@@ -4,6 +4,7 @@ import com.alibaba.dubbo.config.annotation.Reference;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import top.llk.constant.MessageConstant;
@@ -48,6 +49,7 @@ public class ReportController {
      * @return
      */
     @RequestMapping("getMemberReport")
+    @PreAuthorize("hasAuthority('REPORT_VIEW')")
     public Result getMemberReport() {
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.MONTH, -12);//获得当前日期之前12个月的日期
@@ -73,6 +75,7 @@ public class ReportController {
      * @return
      */
     @RequestMapping("getSetmealReport")
+    @PreAuthorize("hasAuthority('REPORT_VIEW')")
     public Result getSetmealReport() {
         try {
             HashMap<String, Object> map = setmealService.countOredersBySetmealId();
@@ -89,6 +92,8 @@ public class ReportController {
      * @return
      */
     @RequestMapping("getBusinessReportData")
+    @PreAuthorize("hasAuthority('REPORT_VIEW')")
+
     public Result getBusinessReportData() {
         try {
             Map<String, Object> map = reportService.getBusinessReportData();
@@ -106,6 +111,8 @@ public class ReportController {
      * @return
      */
     @RequestMapping("exportBusinessReport")
+    @PreAuthorize("hasAuthority('REPORT_VIEW')")
+
     public Result exportBusinessReport(HttpServletRequest request, HttpServletResponse response) {
         try {
             //1.1调用服务,获取报告需要的数据
@@ -158,13 +165,13 @@ public class ReportController {
             row.getCell(7).setCellValue(thisMonthVisitsNumber);//本月到诊数
 
             //热门套餐
-            int rowNum=12;
+            int rowNum = 12;
             for (Map map : hotSetmeal) {
                 String name = (String) map.get("name");
                 Long setmeal_count = (Long) map.get("setmeal_count");
                 //高精度
                 BigDecimal proportion = (BigDecimal) map.get("proportion");
-                row=sheet.getRow(rowNum++);
+                row = sheet.getRow(rowNum++);
                 row.getCell(4).setCellValue(name);//套餐名称
                 row.getCell(5).setCellValue(setmeal_count);//预约数量
                 row.getCell(6).setCellValue(proportion.doubleValue());//占比
@@ -174,7 +181,7 @@ public class ReportController {
             //3.以流的形式传输文件
             ServletOutputStream os = response.getOutputStream();
             response.setContentType("application/vnd.ms-excel");
-            response.setHeader("content-Disposition", "attcahment;filename="+reportDate+"report.xlsx");
+            response.setHeader("content-Disposition", "attcahment;filename=" + reportDate + "report.xlsx");
             workbook.write(os);
 
             //4.关闭流

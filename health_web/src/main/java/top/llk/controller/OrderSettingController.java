@@ -1,6 +1,7 @@
 package top.llk.controller;
 
 import com.alibaba.dubbo.config.annotation.Reference;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -37,6 +38,7 @@ public class OrderSettingController {
      * @return
      */
     @RequestMapping("upload")
+    @PreAuthorize("hasAuthority('ORDERSETTING')")
     public Result upload(MultipartFile excelFile) {
         try {
             List<String[]> list = POIUtils.readExcel(excelFile);
@@ -64,6 +66,7 @@ public class OrderSettingController {
      * @return
      */
     @RequestMapping("queryMonthOrders")
+    @PreAuthorize("hasAuthority('ORDERSETTING')")
     public List<Map<String, Object>> queryMonthOrders(Integer currentYear, Integer currentMonth) {
         return orderSettingService.queryMonthOrders(currentYear, currentMonth);
     }
@@ -76,6 +79,7 @@ public class OrderSettingController {
      * @return
      */
     @RequestMapping("setNumber")
+    @PreAuthorize("hasAuthority('ORDERSETTING')")
     public Result setNumber(Integer number, @RequestBody Date day) {
         try {
             orderSettingService.setNumber(day, number);

@@ -2,6 +2,7 @@ package top.llk.controller;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import org.apache.zookeeper.server.ZooKeeperSaslServer;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -75,6 +76,7 @@ public class UserController {
      */
 
     @RequestMapping("findPage")
+    @PreAuthorize("hasAuthority('USER_QUERY')")
     public Result findPage(@RequestBody QueryPageBean queryPageBean) {
         try {
             PageResult pageResult = userService.selectByCondition(queryPageBean);
@@ -92,6 +94,8 @@ public class UserController {
      * @return
      */
     @RequestMapping("deleteUserById")
+    @PreAuthorize("hasAuthority('USER_DELETE')")
+
     public Result deleteUserById(Integer id) {
         try {
             //获取当前登录的管理员,
@@ -116,6 +120,8 @@ public class UserController {
      * @return
      */
     @RequestMapping("getRoles")
+    @PreAuthorize("hasAuthority('ROLE_QUERY')")
+
     public List<Role> getRoles() {
         return userService.getRoles();
     }
@@ -128,6 +134,8 @@ public class UserController {
      * @return
      */
     @RequestMapping("addRole")
+    @PreAuthorize("hasAuthority('USER_ADD')")
+
     public Result addRole(Integer[] roleIds, @RequestBody top.llk.pojo.User user) {
         try {
             userService.addUser(roleIds, user);
@@ -144,6 +152,8 @@ public class UserController {
      * @return
      */
     @RequestMapping("getRoleIds")
+    @PreAuthorize("hasAuthority('USER_EDIT')")
+
     public List<Integer> getRoleIds(Integer id) {
         return userService.getRoleIds(id);
     }
@@ -155,6 +165,8 @@ public class UserController {
      * @return
      */
     @RequestMapping("edit")
+    @PreAuthorize("hasAuthority('USER_EDIT')")
+
     public Result edit(Integer[] roleIds, @RequestBody top.llk.pojo.User user) {
         try {
             userService.editUser(user, roleIds);

@@ -79,7 +79,7 @@ public class CheckItemController {
      * @description 1.未被检查组使用 2.有被检查组使用
      */
     @RequestMapping("deleteCheckItemById")
-    @PreAuthorize("hasAuthority('CHECKGROUP_DELETE')")
+    @PreAuthorize("hasAuthority('CHECKITEM_DELETE')")
     public @ResponseBody
     Result deleteCheckItemById(String id) {
         Result result = null;
@@ -102,7 +102,7 @@ public class CheckItemController {
      * @param checkItem
      */
     @RequestMapping("editCheckItem")
-    @PreAuthorize("hasAuthority('CHECKGROUP_EDIT')")
+    @PreAuthorize("hasAuthority('CHECKITEM_EDIT')")
     public @ResponseBody
     Result editCheckItem(@RequestBody CheckItem checkItem) {
         try {

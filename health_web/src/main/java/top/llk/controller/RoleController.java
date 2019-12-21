@@ -1,6 +1,7 @@
 package top.llk.controller;
 
 import com.alibaba.dubbo.config.annotation.Reference;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,6 +34,7 @@ public class RoleController {
      * @return
      */
     @RequestMapping("findPage")
+    @PreAuthorize("hasAuthority('ROLE_QUERY')")
     public PageResult findPage(@RequestBody QueryPageBean queryPageBean) {
         try {
             PageResult pageResult = roleService.selectByCondition(queryPageBean);
@@ -49,6 +51,8 @@ public class RoleController {
      * @return
      */
     @RequestMapping("queryRoleAndMenuList")
+    @PreAuthorize("hasAuthority('ROLE_QUERY')")
+
     public Map queryRoleAndMenuList() {
         try {
             Map<String, Object> map = roleService.queryRoleAndMenuList();
@@ -67,6 +71,8 @@ public class RoleController {
      * @param role
      */
     @RequestMapping("addRole")
+    @PreAuthorize("hasAuthority('ROLE_ADD')")
+
     public Result addRole(Integer[] permissionIds, Integer[] menuIds, @RequestBody Role role) {
         try {
             roleService.addRole(permissionIds, menuIds, role);
@@ -84,6 +90,8 @@ public class RoleController {
      * @return
      */
     @RequestMapping("deleteRoleById")
+    @PreAuthorize("hasAuthority('ROLE_DELETE')")
+
     public Result deleteRoleById(Integer id) throws Exception {
         try {
             roleService.deleteRoleById(id);
@@ -105,6 +113,8 @@ public class RoleController {
      * @return map:key: permissionList,menuList,permissionIds,menuIds
      */
     @RequestMapping("findById")
+    @PreAuthorize("hasAuthority('ROLE_EDIT')")
+
     public Map findById(Integer id) {
         try {
             Map<String, Object> map = roleService.findRoleById(id);
@@ -123,6 +133,8 @@ public class RoleController {
      * @param role
      */
     @RequestMapping("editRole")
+    @PreAuthorize("hasAuthority('ROLE_EDIT')")
+
     public Result editRole(Integer[] permissionIds, Integer[] menuIds, @RequestBody Role role) {
         try {
             roleService.editRole(permissionIds, menuIds, role);

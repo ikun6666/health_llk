@@ -2,6 +2,7 @@ package top.llk.controller;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -44,6 +45,7 @@ public class SetmealController {
      * @return
      */
     @RequestMapping("findPage")
+    @PreAuthorize("hasAuthority('SETMEAL_QUERY')")
     public PageResult findPage(@RequestBody QueryPageBean queryPageBean) {
         return setmealService.findPage(queryPageBean);
     }
@@ -85,6 +87,7 @@ public class SetmealController {
      * @param setmeal
      */
     @RequestMapping("addSetmeal")
+    @PreAuthorize("hasAuthority('SETMEAL_ADD')")
     public Result addSetmeal(Integer[] checkgroupIds, @RequestBody Setmeal setmeal) {
         try {
             setmealService.addSetmeal(checkgroupIds, setmeal);
@@ -107,6 +110,7 @@ public class SetmealController {
      * @return
      */
     @RequestMapping("deleteSetmealById")
+    @PreAuthorize("hasAuthority('SETMEAL_DELETE')")
     public Result deleteSetmealById(Integer id) {
         try {
             //删除七牛云的图片
@@ -145,6 +149,7 @@ public class SetmealController {
      * @return
      */
     @RequestMapping("editSetmeal")
+    @PreAuthorize("hasAuthority('SETMEAL_EDIT')")
     public Result editSetmeal(Integer[] checkgroupIds, @RequestBody Setmeal setmeal) {
         try {
             try {
