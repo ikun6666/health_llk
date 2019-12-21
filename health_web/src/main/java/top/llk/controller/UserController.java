@@ -1,7 +1,6 @@
 package top.llk.controller;
 
 import com.alibaba.dubbo.config.annotation.Reference;
-import org.apache.zookeeper.server.ZooKeeperSaslServer;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
@@ -12,7 +11,6 @@ import top.llk.constant.MessageConstant;
 import top.llk.entity.PageResult;
 import top.llk.entity.QueryPageBean;
 import top.llk.entity.Result;
-import top.llk.interfaces.RoleService;
 import top.llk.interfaces.UserService;
 import top.llk.pojo.Menu;
 import top.llk.pojo.Role;

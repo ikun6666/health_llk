@@ -5,11 +5,13 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+import redis.clients.jedis.JedisPool;
 import top.llk.dao.SetmealDao;
 import top.llk.entity.PageResult;
 import top.llk.entity.QueryPageBean;
 import top.llk.interfaces.SetmealService;
 import top.llk.pojo.Setmeal;
+import top.llk.util.SerializeUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,6 +31,8 @@ public class SetmealServiceImpl implements SetmealService {
     @Autowired
     private SetmealDao setmealDao;
 
+    @Autowired
+    private JedisPool jedisPool;
     /**
      * 查询套餐
      *
@@ -139,7 +143,41 @@ public class SetmealServiceImpl implements SetmealService {
      */
     @Override
     public List<Setmeal> findAllSetmeal() {
-        return setmealDao.findAllSetmeal();
+       // return setmealDao.findAllSetmeal();
+        // 先定义一个存入List集合的key,从redis中查询该集合,如果没有数据就从mySql中查询数据,并存到redis中
+        String key = "mobile_SetMealList";
+        // 查询redis中是否存在缓存套餐列表数据    in表示redis中根据key查询到的数据(字节形式)
+        byte[] in = jedisPool.getResource().get(key.getBytes());
+        // 定义一个集合存放mysql中的套餐集合
+        List<Setmeal> mySqlSetMealList = null;
+        // 没有查询数据
+        if (in == null){
+            mySqlSetMealList = setmealDao.findAllSetmeal();
+            jedisPool.getResource().set(key.getBytes(), SerializeUtil.serialize(mySqlSetMealList));
+        }
+        // 走到这里 说明已经从redis中查询到的了套餐列表数据,则反序列化字节为套餐集合,返回结果
+        List<Setmeal> mobile_SetMealList = SerializeUtil.unserializeForList(in);//正常数据
+        // 拿到最新的数据库数据
+        List<Setmeal> DBMySqlSetMealList = setmealDao.findAllSetmeal();
+        // 判断数据库数据是否发生变动
+        if (mobile_SetMealList != DBMySqlSetMealList){
+            // 如果发生变动 删除redis中的数据 in表示redis中根据key查询到的数据(字节形式)
+            //jedisPool.getResource().srem(key.getBytes());
+            // 删除原有的redis数据
+            /*int size = mobile_SetMealList.size();
+            for (int i = 0; i < size; i++) {
+                jedisPool.getResource().lpop(key.getBytes());
+            }*/
+            jedisPool.getResource().del(key.getBytes());
+            // 把最新的数据设置到jedis中
+            jedisPool.getResource().set(key.getBytes(),SerializeUtil.serialize(DBMySqlSetMealList));
+            // 再查询出最新的redis数据
+            byte []newIn = jedisPool.getResource().get(key.getBytes());
+            // 反序列化拿到集合,返回
+            List<Setmeal> DBmobile_SetMealList_Jedis = SerializeUtil.unserializeForList(newIn);//正常数据
+            return DBmobile_SetMealList_Jedis;
+        }
+        return mobile_SetMealList;
     }
 
     /**
