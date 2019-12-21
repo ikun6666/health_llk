@@ -83,13 +83,15 @@ public class UserServiceImpl implements UserService {
         //查询用户的角色
         Set<Role> roles = roleDao.findRolesByUserId(user.getId());
         //根据用户的每个角色查询对应的menu的一级菜单
+        LinkedHashSet<Menu> menus = new LinkedHashSet<>();
         for (Role role : roles) {
             //用户角色id
             Integer roleId = role.getId();
             //根据角色id查询出所有menuId
             List<Integer> menuIds = roleDao.findMenuIdsByRoleId(roleId);
             //根据角色id查询一级菜单集合
-            LinkedHashSet<Menu> menus = menuDao.findMenuListByRoleId(roleId);
+            LinkedHashSet<Menu> menuListByRoleId = menuDao.findMenuListByRoleId(roleId);
+            menus.addAll(menuListByRoleId);
             //遍历查询menu的二级菜单
             for (Menu menu : menus) {
                 Integer parentMenuId = menu.getId();
@@ -105,8 +107,8 @@ public class UserServiceImpl implements UserService {
                 }
                 menu.setChildren(children);
             }
-            menuList.addAll(menus);
         }
+        menuList.addAll(menus);
         return menuList;
     }
 
