@@ -48,4 +48,14 @@
     <select id="findMemberCountByMonth" parameterType="string" resultType="int">
         select count(*) from t_member where regTime &lt;= #{value}
     </select>
+
+    <!--查询所有会员年龄-->
+    <select id="findage" resultType="int">
+        SELECT YEAR(FROM_DAYS( DATEDIFF(NOW( ), birthday))) age FROM t_member
+    </select>
+
+    <!--会员男女占比-->
+    <select id="memberbygenderCount" resultType="map" >
+        SELECT m.sex name,COUNT(m.sex) value FROM t_member m GROUP BY sex
+    </select>
 </mapper>

@@ -88,4 +88,8 @@ public interface MemberDao {
      */
     Integer findMemberCountByMonth(String month);
 
+    List<Integer> findage();
+
+    List<Map> memberbygenderCount();
+
 }

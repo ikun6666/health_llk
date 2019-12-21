@@ -7,6 +7,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import top.llk.constant.MessageConstant;
 import top.llk.entity.Result;
@@ -249,6 +250,25 @@ public class ReportController {
             return new Result(false, MessageConstant.GET_BUSINESS_REPORT_FAIL);
         }
 
+    }
+    /**
+     * 查询年龄段会员占比饼形图
+     * @return
+     */
+    @RequestMapping(value = "/getmemberbyage",method = RequestMethod.GET)
+    public Result getmemberbyage(){
+        Map map=reportService.getmemberbyage();
+        return new Result(true,MessageConstant.GET_MEMBER_NUMBER_REPORT_SUCCESS,map);
+    }
+
+    /**
+     * 查询男女会员占比饼形图
+     * @return
+     */
+    @RequestMapping(value = "/getmemberbygenderReport",method = RequestMethod.GET)
+    public Result getmemberbygenderReport(){
+        Map map=reportService.getmemberbygenderReport();
+        return new Result(true,MessageConstant.GET_MEMBER_NUMBER_REPORT_SUCCESS,map);
     }
 
 }

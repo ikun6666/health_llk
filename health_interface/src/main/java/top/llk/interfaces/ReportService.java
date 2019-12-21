@@ -16,4 +16,10 @@ public interface ReportService {
      * @return
      */
     Map<String,Object> getBusinessReportData() throws Exception;
+
+    Map getmemberbyage();
+
+    Map getmemberbygenderReport();
+
+
 }

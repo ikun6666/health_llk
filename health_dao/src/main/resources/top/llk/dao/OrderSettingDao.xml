@@ -18,4 +18,10 @@
         </set>
         where orderDate = #{orderDate}
     </update>
+
+
+    <!--定时清理预约设置-->
+    <update id="clearOrderSetting" parameterType="date">
+        DELETE FROM t_ordersetting WHERE orderDate &lt; #{date}
+    </update>
 </mapper>

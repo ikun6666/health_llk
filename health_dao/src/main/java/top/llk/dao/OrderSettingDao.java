@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 import top.llk.pojo.OrderSetting;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -51,4 +52,9 @@ public interface OrderSettingDao {
     @Select("SELECT * FROM t_ordersetting WHERE orderDate LIKE #{value}")
     List<OrderSetting> queryOrderSettings(String date);
 
+    /**
+     * 删除预约设置
+     * @param date
+     */
+    void clearOrderSetting(Date date);
 }

@@ -3,6 +3,10 @@ package top.llk.jobs;
 import org.springframework.beans.factory.annotation.Autowired;
 import redis.clients.jedis.JedisPool;
 import top.llk.constant.RedisConstant;
+import top.llk.dao.OrderDao;
+import top.llk.dao.OrderSettingDao;
+import top.llk.pojo.OrderSetting;
+import top.llk.util.DateUtils;
 import top.llk.util.QiniuUtils;
 
 import java.util.Date;
@@ -18,6 +22,11 @@ public class ClearImgJob {
     //导入连接池
     @Autowired
     private JedisPool jedisPool;
+
+    @Autowired
+    private OrderDao orderDao;
+    @Autowired
+    private OrderSettingDao orderSettingDao;
 
     //清理图片
     public void clearImg() {
@@ -35,4 +44,17 @@ public class ClearImgJob {
         }
 
     }
+
+    /**
+     * 定时清理预约数据
+     */
+    public void clearOrder() {
+
+        Date date = DateUtils.getToday();
+
+        orderDao.clearOrder(date);
+        orderSettingDao.clearOrderSetting(date);
+
+    }
+
 }

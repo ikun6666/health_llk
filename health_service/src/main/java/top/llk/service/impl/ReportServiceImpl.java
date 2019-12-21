@@ -7,10 +7,7 @@ import top.llk.dao.OrderDao;
 import top.llk.interfaces.ReportService;
 import top.llk.util.DateUtils;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @Version 1.0
@@ -115,5 +112,82 @@ public class ReportServiceImpl implements ReportService {
         return reportData;
     }
 
+    @Override
+    public Map getmemberbyage() {
+        //查询所有会员的年龄
+        List<Integer> list = memberDao.findage();
+        Integer a = 0;
+        Integer b = 0;
+        Integer c = 0;
+        Integer d = 0;
+        for (Integer integer : list) {
+            if (integer >= 0 && integer <= 18) {
+                a++;
+            } else if (integer >= 19 && integer <= 35) {
+                b++;
+            } else if (integer >= 36 && integer <= 45) {
+                c++;
+            } else if (integer > 45) {
+                d++;
+            }
+        }
+        List<String> list1 = new ArrayList<>();
+        list1.add("0-18");
+        list1.add("19-35");
+        list1.add("36-45");
+        list1.add("45以上");
 
+        Map map = new HashMap();
+        map.put("name", "0-18");
+        map.put("value", a);
+        Map map1 = new HashMap();
+        map1.put("name", "19-35");
+        map1.put("value", b);
+        Map map2 = new HashMap();
+        map2.put("name", "36-45");
+        map2.put("value", c);
+        Map map3 = new HashMap();
+        map3.put("name", "45以上");
+        map3.put("value", d);
+        List<Map> mapList = new ArrayList<>();
+        mapList.add(map);
+        mapList.add(map1);
+        mapList.add(map2);
+        mapList.add(map3);
+
+        Map<String, Object> mapa = new HashMap<>();
+        mapa.put("age", list1);
+        mapa.put("ageCount", mapList);
+        return mapa;
+    }
+
+
+    /**
+     * 查询男女会员占比饼形图
+     *
+     * @return
+     */
+    @Override
+    public Map getmemberbygenderReport() {
+
+        List<Map> maplist = memberDao.memberbygenderCount();
+        //2.定义List<String>存放男女名称
+        List<String> genders = new ArrayList<>();
+
+        //3.获取套餐名称集合
+        if (maplist != null && maplist.size() > 0) {
+            for (Map map : maplist) {
+
+                String gender = Integer.parseInt(map.get("name").toString())==1?"男":"女";
+                genders.add(gender);
+                map.put("name",gender);
+            }
+        }
+
+        //4.定义map最终返回页面需要的数据
+        Map<String, Object> map2 = new HashMap<>();
+        map2.put("genders", genders);
+        map2.put("memberbygenderCount", maplist);
+        return map2;
+    }
 }

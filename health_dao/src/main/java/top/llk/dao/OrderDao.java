@@ -87,4 +87,9 @@ public interface OrderDao {
     List<Map<String, Object>> findHotSetmeal();
 
 
+    /**
+     * 定时删除预约信息
+     * @param date
+     */
+    void clearOrder(Date date);
 }

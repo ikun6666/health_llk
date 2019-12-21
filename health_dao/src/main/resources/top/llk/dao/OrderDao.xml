@@ -72,4 +72,9 @@
           ORDER BY COUNT(o.id) DESC
           LIMIT 2
     </select>
+
+    <!--定时清理预约数据-->
+    <update id="clearOrder" parameterType="date">
+        DELETE FROM t_order WHERE orderdate &lt; #{date}
+    </update>
 </mapper>
