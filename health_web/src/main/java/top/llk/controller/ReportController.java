@@ -83,33 +83,40 @@ public class ReportController {
     public Result getMemberReportByTime(@RequestBody StartToEndTime startToEndTime) {
         Date start = null;
         Date end = null;
-        try {
-            //获取开始和结束月份
-            start = startToEndTime.getDate_start();
-            end = startToEndTime.getDate_end();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new Result(false, MessageConstant.MONTH_ERROR);
-        }
+        //获取开始和结束月份
+        start = startToEndTime.getDate_start();
+        end = startToEndTime.getDate_end();
+
+        //转换成calendar格式
+        Calendar startMonth = Calendar.getInstance();
+        Calendar endMonth = Calendar.getInstance();
+        startMonth.setTime(start);
+        endMonth.setTime(end);
+
 
         //计算月份差=后-前
-        int countMonth = end.getMonth() - start.getMonth();
-        if (countMonth < 0) {
-            //如果前后月份相反,则差值为负数,回传错误信息
+        int month = endMonth.get(Calendar.MONTH) - startMonth.get(Calendar.MONTH);
+        int year = (endMonth.get(Calendar.YEAR) - startMonth.get(Calendar.YEAR)) * 12;
+
+        if (year < 0) {
+            //如果差值为负数,回传错误信息
             return new Result(false, MessageConstant.MONTH_ERROR);
         }
-        //以开始月份作为起始
-        Calendar calendar = Calendar.getInstance();
+        if (month < 0 && year <= 0) {
 
-        calendar.setTime(start);
+            return new Result(false, MessageConstant.MONTH_ERROR);
+        }
 
+
+        //计算总的月份差值
+        int countMonth = year * 12 + month;
 
         List<String> list = new ArrayList<>();
         //以月份差值作为循环次数控制值
-        calendar.add(Calendar.MONTH, -1);
+        startMonth.add(Calendar.MONTH, -1);
         for (int i = 0; i <= countMonth; i++) {
-            calendar.add(Calendar.MONTH, 1);
-            list.add(new SimpleDateFormat("yyyy-MM").format(calendar.getTime()));
+            startMonth.add(Calendar.MONTH, 1);
+            list.add(new SimpleDateFormat("yyyy-MM").format(startMonth.getTime()));
         }
 
         //整理前端需要的数据
@@ -251,24 +258,27 @@ public class ReportController {
         }
 
     }
+
     /**
      * 查询年龄段会员占比饼形图
+     *
      * @return
      */
-    @RequestMapping(value = "/getmemberbyage",method = RequestMethod.GET)
-    public Result getmemberbyage(){
-        Map map=reportService.getmemberbyage();
-        return new Result(true,MessageConstant.GET_MEMBER_NUMBER_REPORT_SUCCESS,map);
+    @RequestMapping(value = "/getmemberbyage", method = RequestMethod.GET)
+    public Result getmemberbyage() {
+        Map map = reportService.getmemberbyage();
+        return new Result(true, MessageConstant.GET_MEMBER_NUMBER_REPORT_SUCCESS, map);
     }
 
     /**
      * 查询男女会员占比饼形图
+     *
      * @return
      */
-    @RequestMapping(value = "/getmemberbygenderReport",method = RequestMethod.GET)
-    public Result getmemberbygenderReport(){
-        Map map=reportService.getmemberbygenderReport();
-        return new Result(true,MessageConstant.GET_MEMBER_NUMBER_REPORT_SUCCESS,map);
+    @RequestMapping(value = "/getmemberbygenderReport", method = RequestMethod.GET)
+    public Result getmemberbygenderReport() {
+        Map map = reportService.getmemberbygenderReport();
+        return new Result(true, MessageConstant.GET_MEMBER_NUMBER_REPORT_SUCCESS, map);
     }
 
 }
