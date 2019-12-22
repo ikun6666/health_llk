@@ -96,7 +96,7 @@ public class ReportController {
 
         //计算月份差=后-前
         int month = endMonth.get(Calendar.MONTH) - startMonth.get(Calendar.MONTH);
-        int year = (endMonth.get(Calendar.YEAR) - startMonth.get(Calendar.YEAR)) * 12;
+        int year = (endMonth.get(Calendar.YEAR) - startMonth.get(Calendar.YEAR)) ;
 
         if (year < 0) {
             //如果差值为负数,回传错误信息
