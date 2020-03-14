@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace=接口的全限定类名 -->
+<mapper namespace="top.llk.dao.OperationLogDao">
+    <!--添加角色-->
+    <insert id="insert" parameterType="top.llk.pojo.OperationLog" >
+        insert into operation_log (id, operate_class, operate_method,
+        return_class, operate_user, operate_time,
+        param_and_value, cost_time, return_value
+        )
+        values (#{id,jdbcType=INTEGER}, #{operateClass,jdbcType=VARCHAR}, #{operateMethod,jdbcType=VARCHAR},
+        #{returnClass,jdbcType=VARCHAR}, #{operateUser,jdbcType=VARCHAR}, #{operateTime,jdbcType=VARCHAR},
+        #{paramAndValue,jdbcType=VARCHAR}, #{costTime,jdbcType=INTEGER}, #{returnValue,jdbcType=VARCHAR}
+        )
+    </insert>
+
+</mapper>
